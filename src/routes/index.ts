@@ -72,7 +72,7 @@ router.post("/api/user/login", async (req: Request, res: Response) => {
     if (bcrypt.compareSync(password, user.password)) {
       const jwtPayload: JwtPayload = {
         _id: user._id,
-        uesrname: user.username,
+        username: user.username,
         isAdmin: user.isAdmin,
       }
       const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {
