@@ -26,7 +26,7 @@ router.post("/api/user/register", async (req: Request, res: Response) => {
   const email: string = req.body.email
   const password: string = req.body.password
   const username: string = req.body.username
-  const isAdmin: boolean = true
+  const isAdmin: boolean = req.body.isAdmin
 
   try {
     let user: IUser | null = await User.findOne({ email })
