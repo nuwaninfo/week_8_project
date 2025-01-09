@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express"
 import bcrypt from "bcrypt"
 import jwt, { JwtPayload } from "jsonwebtoken"
 import { validateToken } from "../middleware/validateToken"
+import { IUser, User } from "../models/User"
 
 const router: Router = Router()
 
@@ -16,30 +17,37 @@ router.get("/echo/:id", (req: Request, res: Response) => {
 type TUser = {
   email: string
   password: string
+  username: string
+  isAdmin: boolean
 }
 let users: Array<TUser> = []
 
 router.post("/api/user/register", async (req: Request, res: Response) => {
   const email: string = req.body.email
   const password: string = req.body.password
+  const username: string = req.body.username
+  const isAdmin: boolean = false
 
   try {
-    const isUserExists: boolean | null = users.some(
-      (user) => user.email === email
-    )
+    let user: IUser | null = await User.findOne({ email })
 
-    if (isUserExists) {
+    if (user) {
       return res.status(403).json({ username: "User already exists" })
     }
 
     const salt: string = bcrypt.genSaltSync(10)
     const hash: string = bcrypt.hashSync(password, salt)
 
-    const newUser: TUser = { email: email, password: hash }
+    user = new User({
+      email: email,
+      password: hash,
+      username: username,
+      isAdmin: isAdmin,
+    })
 
-    users.push(newUser)
+    await user.save()
 
-    return res.status(200).json(newUser)
+    return res.status(200).json(user)
   } catch (error: any) {
     console.error(`Error during registration: ${error}`)
     return res.status(500).json({ error: "Internal Server Error" })
@@ -55,15 +63,17 @@ router.post("/api/user/login", async (req: Request, res: Response) => {
     const email: string = req.body.email
     const password: string = req.body.password
 
-    const user: TUser | undefined = users.find((user) => user.email === email)
+    let user: IUser | null = await User.findOne({ email })
 
     if (!user) {
-      return res.status(401).json({ message: "Login failed" })
+      return res.status(404).json({ message: "Login failed" })
     }
 
     if (bcrypt.compareSync(password, user.password)) {
       const jwtPayload: JwtPayload = {
-        email: user.email,
+        _id: user._id,
+        uesrname: user.username,
+        isAdmin: user.isAdmin,
       }
       const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {
         expiresIn: "10m",
