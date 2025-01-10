@@ -127,7 +127,7 @@ router.post(
 
 router.get(
   "/api/private",
-  validateToken,
+  [validateToken],
   async (req: Request, res: Response) => {
     try {
       return res
