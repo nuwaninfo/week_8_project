@@ -1,17 +1,23 @@
 import { Request, Response, Router } from "express"
 import bcrypt from "bcrypt"
 import jwt, { JwtPayload } from "jsonwebtoken"
-import { validateToken } from "../middleware/validateToken"
+import { validateToken, CustomRequest } from "../middleware/validateToken"
 import { IUser, User } from "../models/User"
+import { ITopic, Topic } from "../models/Topic"
 import {
   Result,
   ValidationError,
   validationResult,
   matchedData,
 } from "express-validator"
-import { loginValdations } from "../validators/inputValidation"
-import { registerValdations } from "../validators/inputValidation"
+import {
+  loginValdations,
+  registerValdations,
+  topicValidations,
+} from "../validators/inputValidation"
+
 import { errorCreator } from "../validators/error-creator"
+import moment from "moment"
 
 const router: Router = Router()
 
@@ -22,14 +28,6 @@ router.get("/hello", (req: Request, res: Response) => {
 router.get("/echo/:id", (req: Request, res: Response) => {
   res.json(req.params)
 })
-
-type TUser = {
-  email: string
-  password: string
-  username: string
-  isAdmin: boolean
-}
-let users: Array<TUser> = []
 
 router.post(
   "/api/user/register",
@@ -75,9 +73,32 @@ router.post(
   }
 )
 
-router.get("/api/user/list", (req: Request, res: Response) => {
-  res.json(users)
-})
+router.get(
+  "/api/topics",
+  validateToken,
+  async (req: CustomRequest, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" })
+      }
+
+      // Get the username from the request object
+      const username: string = req.user.username
+
+      const topics: ITopic[] | null = await Topic.find({ username })
+      console.log(topics)
+
+      if (!topics) {
+        return res.status(404).json({ message: "No topics found" })
+      }
+
+      return res.status(200).json(topics)
+    } catch (error: any) {
+      console.error(`Error while fetching a file: ${error}`)
+      return res.status(500).json({ message: "Internal server error" })
+    }
+  }
+)
 
 router.post(
   "/api/user/login",
@@ -135,6 +156,59 @@ router.get(
         .json({ message: "This is protected secure route!" })
     } catch (error: any) {
       console.log(`Error while fecthing users ${error}`)
+      return res.status(500).json({ error: "Internal Server Error" })
+    }
+  }
+)
+
+router.get(
+  "/api/private",
+  [validateToken],
+  async (req: Request, res: Response) => {
+    try {
+      return res
+        .status(200)
+        .json({ message: "This is protected secure route!" })
+    } catch (error: any) {
+      console.log(`Error while fecthing users ${error}`)
+      return res.status(500).json({ error: "Internal Server Error" })
+    }
+  }
+)
+
+// Implement add topic route handler
+router.post(
+  "/api/topic",
+  [validateToken, ...topicValidations],
+  async (req: CustomRequest, res: Response) => {
+    const errors: Result<ValidationError> = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      const errMsgArr: Record<string, string> = errorCreator(errors.array())
+
+      return res.status(400).json({ errors: errMsgArr })
+    }
+
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" })
+    }
+
+    try {
+      const title: string = req.body.title
+      const content: string = req.body.content
+      const username: string = req.user.username
+      const createdAt: Date = new Date()
+
+      const topic = new Topic({
+        title: title,
+        content: content,
+        username: username,
+        createdAt: createdAt,
+      })
+      await topic.save()
+      return res.status(200).json(topic)
+    } catch (error: any) {
+      console.error(`Error during saving data: ${error}`)
       return res.status(500).json({ error: "Internal Server Error" })
     }
   }

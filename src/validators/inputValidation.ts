@@ -41,4 +41,18 @@ const registerValdations: ValidationChain[] = [
     .escape(),
 ]
 
-export { registerValdations, loginValdations }
+const topicValidations: ValidationChain[] = [
+  body("title")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter a title")
+    .isLength({ max: 500 })
+    .escape(),
+  body("content")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter content")
+    .escape(),
+]
+
+export { registerValdations, loginValdations, topicValidations }

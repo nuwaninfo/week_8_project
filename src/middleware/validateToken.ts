@@ -34,4 +34,4 @@ const validateToken = (
   }
 }
 
-export { validateToken }
+export { validateToken, CustomRequest }
