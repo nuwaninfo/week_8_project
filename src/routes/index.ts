@@ -224,7 +224,7 @@ router.delete(
       }
 
       if (req.user.isAdmin === false) {
-        return res.status(401).json("Unathorized access")
+        return res.status(403).json("Unathorized access")
       }
       const deletedTopic = await Topic.deleteOne({
         _id: req.params.id,
