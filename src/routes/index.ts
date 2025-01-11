@@ -76,12 +76,12 @@ router.post(
 
 router.get(
   "/api/topics",
-  validateToken,
+
   async (req: CustomRequest, res: Response) => {
     try {
-      if (!req.user) {
+      /*if (!req.user) {
         return res.status(401).json({ message: "Unauthorized" })
-      }
+      }*/
 
       // Get the username from the request object
       //const username: string = req.user.username
@@ -194,8 +194,8 @@ router.post(
     }
 
     try {
-      const title: string = req.body.title
-      const content: string = req.body.content
+      const title: string = req.body.topicTitle
+      const content: string = req.body.topicText
       const username: string = req.user.username
       const createdAt: Date = new Date()
 

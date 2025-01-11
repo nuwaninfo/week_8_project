@@ -42,13 +42,13 @@ const registerValdations: ValidationChain[] = [
 ]
 
 const topicValidations: ValidationChain[] = [
-  body("title")
+  body("topicTitle")
     .trim()
     .notEmpty()
     .withMessage("Please enter a title")
     .isLength({ max: 500 })
     .escape(),
-  body("content")
+  body("topicText")
     .trim()
     .notEmpty()
     .withMessage("Please enter content")

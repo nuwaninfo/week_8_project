@@ -11,7 +11,9 @@ const fetchData = async (event) => {
 
   const formData = {
     email: event.target.email.value,
+    username: event.target.username.value,
     password: event.target.password.value,
+    isAdmin: event.target.isAdmin.checked,
   }
 
   try {
@@ -26,7 +28,7 @@ const fetchData = async (event) => {
       document.getElementById("error").innerText =
         "Error when trying to register. Please try again."
     } else {
-      window.location.href = "/login.html"
+      //window.location.href = "/login.html"
     }
   } catch (error) {
     console.log(`Error while trying to register: ${error.message}`)
