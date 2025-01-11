@@ -23,9 +23,9 @@ const validateToken = (
       process.env.SECRET as string
     ) as JwtPayload
 
-    if (!verified.isAdmin) {
+    /*if (!verified.isAdmin) {
       return res.status(403).json({ message: "Access denied." })
-    }
+    }*/
     req.user = verified
 
     next()
