@@ -225,14 +225,15 @@ router.delete(
 
       if (req.user.isAdmin === false) {
         return res.status(403).json("Unathorized access")
-      }
-      const deletedTopic = await Topic.deleteOne({
-        _id: req.params.id,
-      })
-      if (deletedTopic.deletedCount === 1) {
-        res.status(200).json({ message: "Topic deleted successfully." })
       } else {
-        res.status(200).json({ message: "Topic already deleted." })
+        const deletedTopic = await Topic.deleteOne({
+          _id: req.params.id,
+        })
+        if (deletedTopic.deletedCount === 1) {
+          res.status(200).json({ message: "Topic deleted successfully." })
+        } else {
+          res.status(200).json({ message: "Topic already deleted." })
+        }
       }
     } catch (err) {
       console.error("Error deleting user:", err)
