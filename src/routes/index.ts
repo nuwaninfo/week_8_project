@@ -18,6 +18,7 @@ import {
 
 import { errorCreator } from "../validators/error-creator"
 import moment from "moment"
+import { Query } from "mongoose"
 
 const router: Router = Router()
 
@@ -83,10 +84,9 @@ router.get(
       }
 
       // Get the username from the request object
-      const username: string = req.user.username
+      //const username: string = req.user.username
 
-      const topics: ITopic[] | null = await Topic.find({ username })
-      console.log(topics)
+      const topics: ITopic[] | null = await Topic.find()
 
       if (!topics) {
         return res.status(404).json({ message: "No topics found" })
@@ -210,6 +210,32 @@ router.post(
     } catch (error: any) {
       console.error(`Error during saving data: ${error}`)
       return res.status(500).json({ error: "Internal Server Error" })
+    }
+  }
+)
+
+router.delete(
+  "/api/topic/:id",
+  validateToken,
+  async (req: CustomRequest, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" })
+      }
+
+      if (req.user.isAdmin === false) {
+        return res.status(401).json("Unathorized access")
+      }
+      const deletedTopic = await Topic.deleteOne({
+        _id: req.params.id,
+      })
+      if (deletedTopic.deletedCount === 1) {
+        res.status(200).json({ message: "Topic deleted successfully." })
+      } else {
+        res.status(200).json({ message: "Topic already deleted." })
+      }
+    } catch (err) {
+      console.error("Error deleting user:", err)
     }
   }
 )
