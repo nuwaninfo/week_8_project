@@ -220,11 +220,11 @@ router.delete(
   async (req: CustomRequest, res: Response) => {
     try {
       if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" })
+        return res.status(401).json({ message: "Access denied" })
       }
 
       if (req.user.isAdmin === false) {
-        return res.status(403).json("Unathorized access")
+        return res.status(403).json("Access denied")
       } else {
         const deletedTopic = await Topic.deleteOne({
           _id: req.params.id,
