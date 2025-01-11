@@ -223,7 +223,7 @@ router.delete(
         return res.status(401).json({ message: "Access denied" })
       }
 
-      if (req.user.isAdmin === false) {
+      if (!req.user.isAdmin) {
         return res.status(403).json("Access denied")
       } else {
         const deletedTopic = await Topic.deleteOne({
@@ -236,7 +236,7 @@ router.delete(
         }
       }
     } catch (err) {
-      console.error("Error deleting user:", err)
+      console.error("Error deleting topic:", err)
     }
   }
 )
