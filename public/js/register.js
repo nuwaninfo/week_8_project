@@ -28,7 +28,8 @@ const fetchData = async (event) => {
       document.getElementById("error").innerText =
         "Error when trying to register. Please try again."
     } else {
-      //window.location.href = "/login.html"
+      console.log("registerok")
+      window.location.href = "/"
     }
   } catch (error) {
     console.log(`Error while trying to register: ${error.message}`)
