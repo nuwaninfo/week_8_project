@@ -11,27 +11,38 @@ const fetchTopics = async () => {
 
     topicsJson.forEach((topic) => {
       let newTopicDiv = document.createElement("div")
+      newTopicDiv.className = "card z-depth-2 hoverable grey lighten-2"
+
+      let newContentDiv = document.createElement("div")
+      newContentDiv.className = "card-content"
 
       let newTitleSapn = document.createElement("span")
       newTitleSapn.appendChild(document.createTextNode(`${topic.title}`))
+      newTitleSapn.className = "card-title"
 
       let newContentP = document.createElement("P")
       newContentP.appendChild(document.createTextNode(`${topic.content}`))
 
       let newUserNameP = document.createElement("P")
+      newUserNameP.className = "grey-text text-darken-2"
       newUserNameP.appendChild(
         document.createTextNode(`${topic.username} - ${topic.createdAt}`)
       )
+
+      let newButtontDiv = document.createElement("div")
+      newButtontDiv.className = "card-action"
 
       let newDeleteBtn = document.createElement("button")
       newDeleteBtn.id = `${topic._id}`
       newDeleteBtn.className = "deleteTopic"
       newDeleteBtn.textContent = "Delete"
 
-      newTopicDiv.appendChild(newTitleSapn)
-      newTopicDiv.appendChild(newContentP)
-      newTopicDiv.appendChild(newUserNameP)
-      newTopicDiv.appendChild(newDeleteBtn)
+      newTopicDiv.appendChild(newContentDiv)
+      newContentDiv.appendChild(newContentP)
+      newContentDiv.appendChild(newUserNameP)
+
+      newButtontDiv.appendChild(newDeleteBtn)
+      newTopicDiv.appendChild(newButtontDiv)
 
       topicsDiv.appendChild(newTopicDiv)
     })
