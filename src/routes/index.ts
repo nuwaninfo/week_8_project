@@ -194,8 +194,8 @@ router.post(
     }
 
     try {
-      const title: string = req.body.topicTitle
-      const content: string = req.body.topicText
+      const title: string = req.body.title
+      const content: string = req.body.content
       const username: string = req.user.username
       const createdAt: Date = new Date()
 

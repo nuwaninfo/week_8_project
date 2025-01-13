@@ -30,7 +30,7 @@ const validateToken = (
 
     next()
   } catch (error: any) {
-    res.status(401).json({ message: "Access denied" })
+    res.status(401).json({ message: "Access denied kkk" })
   }
 }
 

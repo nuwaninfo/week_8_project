@@ -95,8 +95,8 @@ const fetchData = async (event) => {
   let token = localStorage.getItem("token")
 
   const formData = {
-    topicTitle: event.target.topicTitle.value,
-    topicText: event.target.topicText.value,
+    title: event.target.topicTitle.value,
+    content: event.target.topicText.value,
   }
 
   try {
