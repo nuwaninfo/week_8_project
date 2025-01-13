@@ -224,16 +224,17 @@ router.delete(
       }
 
       if (!req.user.isAdmin) {
-        return res.status(403).json("Access denied")
+        return res.status(403).json({ message: "Access denied" })
+      }
+
+      const deletedTopic = await Topic.deleteOne({
+        _id: req.params.id,
+      })
+
+      if (deletedTopic.deletedCount === 1) {
+        res.status(200).json({ message: "Topic deleted successfully." })
       } else {
-        const deletedTopic = await Topic.deleteOne({
-          _id: req.params.id,
-        })
-        if (deletedTopic.deletedCount === 1) {
-          res.status(200).json({ message: "Topic deleted successfully." })
-        } else {
-          res.status(200).json({ message: "Topic already deleted." })
-        }
+        res.status(200).json({ message: "Topic already deleted." })
       }
     } catch (err) {
       console.error("Error deleting topic:", err)
