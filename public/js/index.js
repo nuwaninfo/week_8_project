@@ -4,6 +4,10 @@ document.getElementById("topicTitle").addEventListener("focus", function () {
   document.querySelector('label[for="topicTitle"]').classList.add("active")
 })
 
+document.addEventListener("DOMContentLoaded", () => {
+  M.updateTextFields()
+})
+
 // Fetch Topics
 const fetchTopics = async () => {
   const topicsDiv = document.getElementById("topics")
